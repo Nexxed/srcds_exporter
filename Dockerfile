@@ -6,4 +6,4 @@ COPY . .
 RUN npm install pm2 -g
 RUN npm install
 
-CMD ["pm2-runtime", "index.js"]
+CMD ["pm2-runtime", "src/index.js"]
