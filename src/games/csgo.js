@@ -25,6 +25,7 @@ const formatRconResult = function (result) {
 		os: infosArray[3].split(":  ")[1],
 		type: infosArray[4].split(":  ")[1],
 		map: infosArray[5].split(": ")[1],
+		hibernating: infosArray[6].indexOf("(hibernating)") > -1,
 
 		players: infosArray
 			.slice(
@@ -63,7 +64,7 @@ const setMetrics = function (result, reqInfos) {
 
 	csgoRegistry.setDefaultLabels(defaultLabels)
 
-	metrics.status.set(Number(1))
+	metrics.status.set(stats.hibernating ? 2 : 1)
 	metrics.cpu.set(Number(stats[0]))
 	metrics.netin.set(Number(stats[1]))
 	metrics.netout.set(Number(stats[2]))

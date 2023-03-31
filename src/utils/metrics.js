@@ -13,7 +13,7 @@ const registries = {
 const metrics = {
 	status: new Gauge({
 		name: "srcds_status",
-		help: "The server's status, 0 = offline/bad password, 1 = online",
+		help: "The server's status, 0 = offline/bad password, 1 = online, 2 = hibernating",
 		registers: [
 			registries.csgoRegistry,
 			registries.gmodRegistry,
