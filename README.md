@@ -1,4 +1,5 @@
 # SRCDS Prometheus exporter
+
 ### The goal of this project is to provide a simple way to get metrics from various Source dedicated servers and expose them in Grafana.
 <p align="center">
     <img src="./images/csgo.png" height="80">
@@ -9,14 +10,24 @@
     <img src="./images/tf2.png" height="80">
 </p>
 <p align="center">
-  <img src="https://img.shields.io/github/stars/unyxos/srcds_exporter?style=social">
-  <a href="https://hub.docker.com/repository/docker/corentincl/srcds_exporter" alt="Activity">
-    <img src="https://img.shields.io/docker/pulls/corentincl/srcds_exporter?logo=docker"/>
+  <img src="https://img.shields.io/github/stars/nexxed/srcds_exporter?style=social">
+  <a href="https://hub.docker.com/repository/docker/nexxed/srcds_exporter" alt="Activity">
+    <img src="https://img.shields.io/docker/pulls/nexxed/srcds_exporter?logo=docker"/>
   </a>
-  <img src="https://img.shields.io/docker/v/corentincl/srcds_exporter?logo=docker&sort=semver">
-  <img src="https://img.shields.io/docker/image-size/corentincl/srcds_exporter/latest?logo=docker">
-  <img src="https://img.shields.io/docker/stars/corentincl/srcds_exporter?logo=docker">
+  <img src="https://img.shields.io/docker/v/nexxed/srcds_exporter?logo=docker&sort=semver">
+  <img src="https://img.shields.io/docker/image-size/nexxed/srcds_exporter/latest?logo=docker">
+  <img src="https://img.shields.io/docker/stars/nexxed/srcds_exporter?logo=docker">
 </p>
+
+# This is a fork of the original project
+I forked the [original project](https://github.com/Unyxos/srcds_exporter) to add per-player metrics and improve parsing for my own personal use. I haven't submitted a PR to the original repository due to file structure changes that the original author may not like. If you're the original author, open an issue if you're fine with this so we can get these changes merged, thanks! :)
+
+The parsing for the below features could most likely be ported to the other games with relative ease if the output of the status command is the same, but I don't have the time to test each game and so they will only be for CS:GO for now. Create a PR if you've tested the changes with other games and would like to add them to the project :)
+
+```
+Added per-player metrics for tracking player latency (ping), packet loss, and rate (CS:GO only).
+Improved parsing of the "status" RCON command to fetch OS and and server type (CS:GO only).
+```
 
 ## How to install
 
