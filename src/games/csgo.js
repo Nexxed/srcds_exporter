@@ -64,7 +64,7 @@ const setMetrics = function (result, reqInfos) {
 
 	csgoRegistry.setDefaultLabels(defaultLabels)
 
-	metrics.status.set(stats.hibernating ? 2 : 1)
+	metrics.status.set(status.hibernating ? 2 : 1)
 	metrics.cpu.set(Number(stats[0]))
 	metrics.netin.set(Number(stats[1]))
 	metrics.netout.set(Number(stats[2]))
