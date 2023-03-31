@@ -83,7 +83,10 @@ const setMetrics = function (result, reqInfos) {
 
 	// go through each disconnected players' identifiers and remove the metrics for them
 	for (const playerIdentifiers of disconnectedPlayers) {
-		metrics.remove(...playerIdentifiers)
+		const values = Object.values(playerIdentifiers)
+		metrics.player_ping.remove(...values)
+		metrics.player_loss.remove(...values)
+		metrics.player_rate.remove(...values)
 	}
 
 	const playerIdentifiers = []
