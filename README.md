@@ -32,7 +32,7 @@ Improved parsing of the "status" RCON command to fetch OS and and server type (C
 ## How to install
 
 ### Method 1 : With docker
-`docker run -d -p <external port>:9591 --name srcds_exporter --restart=always corentincl/srcds_exporter`
+`docker run -d -p <external port>:9591 --name srcds_exporter --restart=always nexxed/srcds_exporter`
 
 ### Method 2 : Download sources and run
 
