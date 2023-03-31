@@ -3,7 +3,7 @@ const { csgoRegistry } = require("../utils/metrics.js").registries
 const { metrics } = require("../utils/metrics.js")
 
 const playerRowRegex =
-	/^#  (?<userid>[0-9]+) (?:.*?) "(?<name>.*?)" (?<uniqueid>STEAM_[10]:[10]:[0-9]+) (?<connected>[0-9]+:[0-9]+) (?<ping>[0-9]+) (?<loss>[0-9]+) (?<state>.*?) (?<rate>[0-9]+) (?<address>.*?):(?<port>[0-9]+)$/
+	/^#[ \t]+(?<userid>[0-9]+)[ \t]+(?:.*?)[ \t]+"(?<name>.*?)"[ \t]+(?<uniqueid>STEAM_[10]:[10]:[0-9]+)[ \t]+(?<connected>[0-9]+:[0-9]+)[ \t]+(?<ping>[0-9]+)[ \t]+(?<loss>[0-9]+)[ \t]+(?<state>.*?)[ \t]+(?<rate>[0-9]+)[ \t]+(?<address>.*?):(?<port>[0-9]+)$/
 
 // used for storing player ID's of servers so we can remove stale/disconnected players
 const serverPlayers = new Map()
