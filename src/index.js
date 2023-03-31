@@ -36,7 +36,7 @@ app.get("/metrics", validator.query(metricsParamsSchema), async (req, res) => {
 
 		res.end(response)
 	} catch (err) {
-		logger.error({ step: "FETCH_METRICS", err: err.message }, "error while fetching metrics from server")
+		logger.error({ step: "FETCH_METRICS", err }, "error while fetching metrics from server")
 		const response = games[game].setNoMetrics({ ip, port, game })
 		res.end(response)
 	}
