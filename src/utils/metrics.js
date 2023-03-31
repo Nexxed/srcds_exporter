@@ -133,7 +133,7 @@ const metrics = {
 		help: "The network rate of all connected players",
 		registers: [registries.csgoRegistry],
 		labelNames: ["id", "name", "uniqueid"]
-	}),
+	})
 }
 
 module.exports = {
