@@ -5,6 +5,9 @@ const { metrics } = require("../utils/metrics.js")
 const playerRowRegex =
 	/^#  (?<userid>[0-9]+) (?:.*?) "(?<name>.*?)" (?<uniqueid>STEAM_[10]:[10]:[0-9]+) (?<connected>[0-9]+:[0-9]+) (?<ping>[0-9]+) (?<loss>[0-9]+) (?<state>.*?) (?<rate>[0-9]+) (?<address>.*?):(?<port>[0-9]+)$/
 
+// used for storing player ID's of servers so we can remove stale/disconnected players
+const serverPlayers = new Map()
+
 const formatRconResult = function (result) {
 	let { stats, status } = result
 
@@ -57,6 +60,7 @@ const setMetrics = function (result, reqInfos) {
 		os: status.os,
 		type: status.type
 	}
+
 	csgoRegistry.setDefaultLabels(defaultLabels)
 
 	metrics.status.set(Number(1))
@@ -71,13 +75,34 @@ const setMetrics = function (result, reqInfos) {
 	metrics.varms.set(Number(stats[8]))
 	metrics.tick.set(Number(stats[9]))
 
+	// get all players from the previous fetch for this server
+	const previousPlayers = serverPlayers.get(defaultLabels.server) ?? []
+
+	// filter the last fetch and find players that do not exist in the latest fetch
+	const disconnectedPlayers = previousPlayers.filter((identifiers) => !status.players.find((player) => player.uniqueid === identifiers.uniqueid))
+
+	// go through each disconnected players' identifiers and remove the metrics for them
+	for (const playerIdentifiers of disconnectedPlayers) {
+		metrics.remove(...playerIdentifiers)
+	}
+
+	const playerIdentifiers = []
 	for (const player of status.players) {
+
+		// form an object of the players' identifiers
 		const identifiers = { id: player.userid, name: player.name, uniqueid: player.uniqueid }
+
+		// update the metrics for this set of identifiers
 		metrics.player_ping.set(identifiers, Number(player.ping))
 		metrics.player_loss.set(identifiers, Number(player.loss))
 		metrics.player_rate.set(identifiers, Number(player.rate))
+
+		// push this players' identifiers to an array
+		playerIdentifiers.push(identifiers)
 	}
 
+	// set the players map for this server to the player identifiers object
+	serverPlayers.set(defaultLabels.server, playerIdentifiers)
 	return csgoRegistry.metrics()
 }
 
