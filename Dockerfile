@@ -1,6 +1,6 @@
 FROM node:18-alpine
 
-WORKDIR /srcds_exporter
+WORKDIR /app
 
 COPY . .
 RUN yarn install
