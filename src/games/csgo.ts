@@ -1,55 +1,83 @@
-const { csgoRegistry } = require("../utils/metrics.js").registries
+import type { IRequestInformation } from "."
+import { metrics } from "../utils/metrics"
+import { registries } from "../utils/metrics"
 
-const { metrics } = require("../utils/metrics.js")
+interface IPlayerStatus {
+	userid: string
+	name: string
+	uniqueid: string
+	connected: string
+	ping: string
+	loss: string
+	state: string
+	rate: string
+	address: string
+	port: string
+}
+
+interface IPlayerIdentifiers {
+	id: string
+	name: string
+	uniqueid: string
+}
+
+interface RCONResult {
+	stats: string
+	status: string
+}
 
 const playerRowRegex =
 	/^#[ \t]+(?<userid>[0-9]+)[ \t]+(?:.*?)[ \t]+"(?<name>.*?)"[ \t]+(?<uniqueid>STEAM_[10]:[10]:[0-9]+)[ \t]+(?<connected>[0-9]+:[0-9]+)[ \t]+(?<ping>[0-9]+)[ \t]+(?<loss>[0-9]+)[ \t]+(?<state>.*?)[ \t]+(?<rate>[0-9]+)[ \t]+(?<address>.*?):(?<port>[0-9]+)$/
 
 // used for storing player ID's of servers so we can remove stale/disconnected players
-const serverPlayers = new Map()
+const serverPlayers = new Map<string, IPlayerIdentifiers[]>()
 
-const formatRconResult = function (result) {
-	let { stats, status } = result
+const formatRconResult = function (result: RCONResult) {
+	const { stats, status } = result
 
-	stats = stats.split(/\r?\n/)
-	stats.pop()
-	stats.shift()
-	stats = stats[0].trim().split(/\s+/)
+	let processedStats = stats.split(/\r?\n/)
+	processedStats.pop()
+	processedStats.shift()
+	processedStats = processedStats[0].trim().split(/\s+/)
 
-	const infosArray = status.split(/\r?\n/)
+	const statusLines = status.split(/\r?\n/)
+	const processedPlayers = statusLines
+		.slice(
+			statusLines.findIndex((row) => row.startsWith("# userid")) + 1,
+			statusLines.findIndex((row) => row === "#end")
+		)
+		.map((row) => {
+			// parse the player row and match the data we need
+			const matches = row.match(playerRowRegex)
+			if (!matches || !matches.groups) return false
 
-	status = {
-		hostname: infosArray[0].split(": ").slice(1).join(": "),
-		version: infosArray[1].split(": ")[1].split("/")[0],
-		listenAddress: infosArray[2].split(": ")[1].split("  ")[0],
-		os: infosArray[3].split(":  ")[1],
-		type: infosArray[4].split(":  ")[1],
-		map: infosArray[5].split(": ")[1],
-		hibernating: infosArray[6].indexOf("(hibernating)") > -1,
+			// extract each column value from the matches and assign it to a fresh object
+			const obj = {}
+			Object.assign(obj, matches.groups)
 
-		players: infosArray
-			.slice(
-				infosArray.findIndex((row) => row.startsWith("# userid")) + 1,
-				infosArray.findIndex((row) => row === "#end")
-			)
-			.map((row) => {
-				const matches = row.match(playerRowRegex)
-				if (!matches || !matches.groups) return false
+			return obj as IPlayerStatus
+		})
+		.filter((r) => r) as IPlayerStatus[]
 
-				const obj = {}
-				Object.assign(obj, matches.groups)
-				return obj
-			})
-			.filter((r) => r)
+	const processedStatus = {
+		hostname: statusLines[0].split(": ").slice(1).join(": "),
+		version: statusLines[1].split(": ")[1].split("/")[0],
+		listenAddress: statusLines[2].split(": ")[1].split("  ")[0],
+		os: statusLines[3].split(":  ")[1],
+		type: statusLines[4].split(":  ")[1],
+		map: statusLines[5].split(": ")[1],
+		hibernating: statusLines[6].indexOf("(hibernating)") > -1,
+
+		players: processedPlayers
 	}
 
 	return {
-		stats,
-		status
+		stats: processedStats,
+		status: processedStatus
 	}
 }
 
-const setMetrics = function (result, reqInfos) {
+const setMetrics = function (result: RCONResult, reqInfos: IRequestInformation) {
 	const { stats, status } = formatRconResult(result)
 
 	const defaultLabels = {
@@ -62,7 +90,7 @@ const setMetrics = function (result, reqInfos) {
 		type: status.type
 	}
 
-	csgoRegistry.setDefaultLabels(defaultLabels)
+	registries.csgoRegistry.setDefaultLabels(defaultLabels)
 
 	metrics.status.set(status.hibernating ? 2 : 1)
 	metrics.cpu.set(Number(stats[0]))
@@ -92,7 +120,6 @@ const setMetrics = function (result, reqInfos) {
 
 	const playerIdentifiers = []
 	for (const player of status.players) {
-
 		// form an object of the players' identifiers
 		const identifiers = { id: player.userid, name: player.name, uniqueid: player.uniqueid }
 
@@ -107,22 +134,22 @@ const setMetrics = function (result, reqInfos) {
 
 	// set the players map for this server to the player identifiers object
 	serverPlayers.set(defaultLabels.server, playerIdentifiers)
-	return csgoRegistry.metrics()
+	return registries.csgoRegistry.metrics()
 }
 
-setNoMetrics = function (reqInfos) {
+const setNoMetrics = function (reqInfos: IRequestInformation) {
 	const defaultLabels = {
 		server: `${reqInfos.ip}:${reqInfos.port}`,
 		game: reqInfos.game
 	}
 
-	csgoRegistry.setDefaultLabels(defaultLabels)
+	registries.csgoRegistry.setDefaultLabels(defaultLabels)
 	metrics.status.set(Number(0))
 
-	return csgoRegistry.metrics()
+	return registries.csgoRegistry.metrics()
 }
 
-module.exports = {
+export default {
 	setMetrics,
 	setNoMetrics
 }

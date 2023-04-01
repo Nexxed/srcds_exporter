@@ -1,0 +1,20 @@
+{
+    "type": "object",
+    "properties": {
+        "ip": {
+            "type": "string"
+        },
+        "port": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 65535
+        },
+        "password": {
+            "type": "string"
+        },
+        "game": {
+            "type": "string"
+        }
+    },
+    "required": ["ip", "port", "password", "game"]
+}

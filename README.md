@@ -19,15 +19,23 @@
   <img src="https://img.shields.io/docker/stars/nexxed/srcds_exporter?logo=docker">
 </p>
 
-# This is a fork of the original project
+# This is a fork of the original project, ported to TypeScript
 I forked the [original project](https://github.com/Unyxos/srcds_exporter) to add per-player metrics and improve parsing for my own personal use. I haven't submitted a PR to the original repository due to file structure changes that the original author may not like. If you're the original author, open an issue if you're fine with this so we can get these changes merged, thanks! :)
 
 The parsing for the below features could most likely be ported to the other games with relative ease if the output of the status command is the same, but I don't have the time to test each game and so they will only be for CS:GO for now. Create a PR if you've tested the changes with other games and would like to add them to the project :)
+```
+(CS:GO) Added hibernation status (2), as requested here: https://github.com/Unyxos/srcds_exporter/issues/15
+(CS:GO) Added per-player metrics for tracking player latency (ping), packet loss, and send rate (in bytes).
+(CS:GO) Improved parsing of the "status" RCON command to fetch OS and and server type.
+Ported to TypeScript with (hopefully) less bugs.
+```
 
-```
-Added per-player metrics for tracking player latency (ping), packet loss, and rate (CS:GO only).
-Improved parsing of the "status" RCON command to fetch OS and and server type (CS:GO only).
-```
+# Important!
+Since this project was ported to TypeScript, it's not a guarantee that any games other than CS:SGO work without bugs/issues.
+Even though it should be fine, please open an issue if something isn't working as intended.
+
+The RCON library that was used (unyxos/working-rcon) has also been ported to TypeScript and is bundled with the package to cut-down on dependencies.
+The web server also uses Fastify now instead of express which means less overhead and slightly faster performance.
 
 ## How to install
 

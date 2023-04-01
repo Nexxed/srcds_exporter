@@ -1,6 +1,6 @@
-const pino = require("pino")
+import { Logger, pino } from "pino"
 
-let logger
+let logger: Logger
 if (process.env.NODE_ENV === "development") {
 	logger = pino({
 		level: "debug",
@@ -15,4 +15,4 @@ if (process.env.NODE_ENV === "development") {
 	logger = pino()
 }
 
-module.exports = logger
+export default logger

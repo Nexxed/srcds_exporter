@@ -1,7 +1,7 @@
-const prometheus = require("prom-client")
+import prometheus from "prom-client"
 const { Gauge } = prometheus
 
-const registries = {
+export const registries = {
 	csgoRegistry: new prometheus.Registry(),
 	gmodRegistry: new prometheus.Registry(),
 	cssRegistry: new prometheus.Registry(),
@@ -10,7 +10,7 @@ const registries = {
 	hl2Registry: new prometheus.Registry()
 }
 
-const metrics = {
+export const metrics = {
 	status: new Gauge({
 		name: "srcds_status",
 		help: "The server's status, 0 = offline/bad password, 1 = online, 2 = hibernating",
@@ -134,9 +134,4 @@ const metrics = {
 		registers: [registries.csgoRegistry],
 		labelNames: ["id", "name", "uniqueid"]
 	})
-}
-
-module.exports = {
-	registries,
-	metrics
 }
