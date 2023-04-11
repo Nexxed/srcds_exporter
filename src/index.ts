@@ -12,6 +12,13 @@ dotenv.config()
 const server = Fastify()
 const gameKeys = Object.keys(games)
 
+// this is how we control whether or not to skip the stats command for when the map changes
+let skipStats = new Map<string, boolean>()
+
+// these functions are called by game modules
+export const getSkipStats = (server: string) => skipStats.get(server) ?? false
+export const setSkipStats = (server: string, value: boolean) => skipStats.set(server, value)
+
 server.get("/", (req, res) => {
 	res.type("text/html").send(fs.readFileSync(__dirname + "/../static/homepage.html"))
 })

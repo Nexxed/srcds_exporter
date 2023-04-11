@@ -100,6 +100,11 @@ export const metrics = {
 			registries.l4d2Registry
 		]
 	}),
+	maxplayers: new Gauge({
+		name: "srcds_maxplayers",
+		help: "The server's current players",
+		registers: [registries.csgoRegistry]
+	}),
 	svms: new Gauge({ name: "srcds_svms", help: "The server's current SVMs", registers: [registries.csgoRegistry] }),
 	varms: new Gauge({ name: "srcds_varm", help: "The server's current VARMs", registers: [registries.csgoRegistry] }),
 	tick: new Gauge({ name: "srcds_tick", help: "The server's current tick", registers: [registries.csgoRegistry] }),
