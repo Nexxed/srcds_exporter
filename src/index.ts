@@ -46,7 +46,7 @@ server.get("/metrics", { schema }, async (req, res) => {
 })
 
 process.env.HTTP_PORT ??= "9591"
-server.listen({ port: Number(process.env.HTTP_PORT) }, (err, address) => {
+server.listen({ host: "0.0.0.0", port: Number(process.env.HTTP_PORT) }, (err, address) => {
 	if (err) {
 		logger.fatal({ step: "LISTEN", err }, `An error occurred while binding the metrics server to ${address}`)
 		process.exit(1)
